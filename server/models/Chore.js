@@ -18,6 +18,10 @@ const choreSchema = new Schema(
       default: Date.now,
       get: timestamp => dateFormat(timestamp)
     },
+    createdBy: {
+      type: String,
+      required: true
+    },
     isDone: {
       type: Boolean,
       default: false

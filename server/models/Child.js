@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose');
-const choresSchema = require('./Chores');
+const choreSchema = require('./Chore');
 const dateFormat = require('../utils/dateFormat');
 
 const childSchema = new Schema(
@@ -20,7 +20,7 @@ const childSchema = new Schema(
           ref: 'Parent'
         }
       ],
-    chores: [choresSchema],
+    chores: [choreSchema],
     passcode: {
       type: String,
       required: "You have to set a passcode for your child!",
