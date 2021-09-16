@@ -14,19 +14,17 @@ const childSchema = new Schema(
       default: Date.now,
       get: timestamp => dateFormat(timestamp)
     },
-    parents: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: 'Parent'
-        }
-      ],
-    chores: [choreSchema],
+    parent: {
+      type: String,
+      required: true
+    },
     passcode: {
       type: String,
       required: "You have to set a passcode for your child!",
       minlength: 5,
       maxlength: 8
-    }
+    },
+    chores: [choreSchema]
   },
   {
     toJSON: {
@@ -39,6 +37,6 @@ childSchema.virtual('choreCount').get(function() {
   return this.chores.length;
 });
 
-const child = model('child', childSchema);
+const Child = model('Child', childSchema);
 
-module.exports = child;
+module.exports = Child;

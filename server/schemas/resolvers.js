@@ -60,15 +60,15 @@ const resolvers = {
       return { token, parent };
     },
     addChild: async (parentArg, args, context) => {
+      console.log(context.parent);
       if (context.parent) {
-        const child = await Child.create({ ...args, username: context.parent.username });
-
+        const child = await Child.create({ ...args, parent: context.parent.username });
         await Parent.findByIdAndUpdate(
           { _id: context.parent._id },
           { $push: { children: child._id } },
           { new: true }
         );
-
+          
         return child;
       }
 
