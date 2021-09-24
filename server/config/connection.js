@@ -5,6 +5,9 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/mom', {
   useUnifiedTopology: true,
   useCreateIndex: true,
   useFindAndModify: false
+})
+.then((connection) => {
+  mongoose.connection.db.dropDatabase();
 });
 
 module.exports = mongoose.connection;

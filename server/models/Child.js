@@ -1,6 +1,7 @@
 const { Schema, model } = require('mongoose');
 const choreSchema = require('./Chore');
 const dateFormat = require('../utils/dateFormat');
+const bcrypt = require('bcrypt');
 
 const childSchema = new Schema(
   {
@@ -14,7 +15,7 @@ const childSchema = new Schema(
       default: Date.now,
       get: timestamp => dateFormat(timestamp)
     },
-    parent: {
+    parentUsername: {
       type: String,
       required: true
     },
@@ -32,6 +33,19 @@ const childSchema = new Schema(
     }
   }
 );
+childSchema.pre('save', async function(next) {
+  if (this.isNew || this.isModified('passcode')) {
+    const saltRounds = 10;
+    this.passcode = await bcrypt.hash(this.passcode, saltRounds);
+  }
+
+  next();
+});
+
+// compare the incoming password with the hashed password
+childSchema.methods.isCorrectPassword = async function(passcode) {
+  return bcrypt.compare(passcode, this.passcode);
+};
 
 childSchema.virtual('choreCount').get(function() {
   return this.chores.length;

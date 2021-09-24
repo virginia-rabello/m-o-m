@@ -29,10 +29,13 @@ const resolvers = {
     children: async (parentArg, { username }) => {
       const params = username ? { username } : {};
       return Child.find(params)
+      .select('-__v -passcode')
       .sort({ dateOfBirth: -1 });
     },
     child: async (parentArg, { _id }) => {
-      return Child.findOne({ _id });
+      return Child.findOne({ _id })
+      .populate('chores')
+      .sort({createdAt: -1});
     }
   },
 
@@ -59,16 +62,31 @@ const resolvers = {
       const token = signToken(parent);
       return { token, parent };
     },
+    loginChild: async (parentArg, { parentUsername, childName, passcode }) => {
+      const child = await Child.findOne({ parentUsername, childName });
+
+      if (!child) {
+        throw new AuthenticationError('Incorrect credentials');
+      }
+
+      const correctPw = await child.isCorrectPassword(passcode);
+
+      if (!correctPw) {
+        throw new AuthenticationError('Incorrect credentials');
+      }
+
+      const token = signToken(child);
+      return { token, child };
+    },
     addChild: async (parentArg, args, context) => {
-      console.log(context.parent);
       if (context.parent) {
-        const child = await Child.create({ ...args, parent: context.parent.username });
+        const child = await Child.create({ ...args, parentUsername: context.parent.username });
         await Parent.findByIdAndUpdate(
           { _id: context.parent._id },
           { $push: { children: child._id } },
           { new: true }
         );
-          
+         console.log(child) ;
         return child;
       }
 

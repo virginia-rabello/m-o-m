@@ -14,8 +14,9 @@ const typeDefs = gql`
     childName: String
     dateOfBirth: String
     passcode: String
-    parents: [Parent]
+    parentUsername: String
     chores: [Chore]
+    choreCount: Int
   }
 
   type Chore {
@@ -25,7 +26,7 @@ const typeDefs = gql`
     createdAt: String
     createdBy: String
     isDone: Boolean
-    value: String
+    value: Float
   }
 
   type Auth {
@@ -41,9 +42,10 @@ const typeDefs = gql`
   }
   type Mutation {
     login(email: String!, password: String!): Auth
+    loginChild(parentUsername: String!, childName: String!, passcode: String!): Auth
     addParent(email: String!, password: String!, username: String!): Auth
     addChild(childName: String!, dateOfBirth: String!, passcode:String!): Child
-    addChore(childId: ID!, title: String!, instructions: String!, value: String!): Child
+    addChore(childId: ID!, title: String!, instructions: String!, value: Float!): Child
   }
 `;
 
